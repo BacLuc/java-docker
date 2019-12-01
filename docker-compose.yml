@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  java:
+    env_file:
+      - .env
+    build:
+      context: docker
+      args:
+        JAVA_VERSION: $JAVA_VERSION
+        MAVEN_VERSION: $MAVEN_VERSION
+    image: bacluc/java:$JAVA_VERSION
+    ports:
+      - 5900:5900
+    volumes:
+      - ./hellofx:/home/app/hellofx
+      - m2-cache:/home/app/.m2
+
+volumes:
+  m2-cache:
