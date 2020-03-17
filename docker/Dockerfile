@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as base
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -8,7 +8,7 @@ ARG MAVEN_VERSION
 RUN apt-get update && apt-get install -y \
         apt-transport-https \
         libgtk2.0-0 libwebkit2gtk-4.0-37 libasound2 \
-        git ant xvfb x11vnc fonts-liberation \
+        git ant fonts-liberation \
         openjdk-${JAVA_VERSION}-jdk \
         maven
 
@@ -20,9 +20,23 @@ RUN chown -R app:app /home/app
 
 VOLUME /home/app/.m2
 
+WORKDIR /home/app/app
+
+USER app
+
+############
+
+FROM base as vnc
+
+RUN apt-get update && apt-get install -y \
+        apt-transport-https \
+        libgtk2.0-0 libwebkit2gtk-4.0-37 libasound2 \
+        git ant xvfb x11vnc fonts-liberation \
+        openjdk-${JAVA_VERSION}-jdk \
+        maven
+
 COPY start-display /start-display
 RUN chmod +x /start-display
 
-WORKDIR /home/app/app
 
 ENTRYPOINT ["/start-display"]
